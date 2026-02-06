@@ -1,56 +1,38 @@
 def aStar(graph, start, goal, h):
-    open_list = {start}
-    closed_list = set()
-
-    g= {}
-    g[start] = 0
-
-    parent = {}
-    parent[start] = start
+    open_list = [start]
+    g = {start : 0}
+    parent = {start : None}
 
     while open_list:
-        n = None
+        n = open_list[0]
 
         for v in open_list:
-            if n is None or g[v]+h[v] < g[n]+h[n]:
+            if g[v] + h[v] < g[n] + h[n]:
                 n = v
 
-        if n == goal:
+        if n==goal:
             path = []
-            while parent[n] != n:
+            while n:
                 path.append(n)
                 n = parent[n]
-
-            path.append(start)
-            path.reverse()
-            print("Path Found: ",path)
+            print("Path: ", path[::-1])
             return
-        
-        for m, cost in graph[n]:
-            if m not in open_list and m not in closed_list:
-                open_list.add(m)
-                parent[m] = n
-                g[m] = g[n] + cost
 
         open_list.remove(n)
-        closed_list.add(n)
-
-    print("path does not exists!")
-
+        
+        for m, cost in graph[n]:
+            if m not in g:
+                open_list.append(m)
+                parent[m]=n
+                g[m] = g[n]+cost
 
 graph = {
-    'A': [('B', 1), ('C', 3)],
-    'B': [('D', 1)],
-    'C': [('D', 1)],
-    'D': []
+    'A' : [('B',1), ('C', 3)],
+    'B' : [('D',1)],
+    'C' : [('D',1)],
+    'D' : []
 }
 
-heuristic = {
-    'A': 3,
-    'B': 2,
-    'C': 1,
-    'D': 0
-}
+h = {'A' : 3, 'B' : 2, 'C' : 1, 'D' : 0}
 
-aStar(graph, 'A', 'D', heuristic)
-
+aStar(graph, 'A', 'D', h)
